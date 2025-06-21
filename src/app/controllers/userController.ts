@@ -4,7 +4,6 @@ import { z } from "zod";
 
 export const userRoutes = express.Router();
 
-
 const CreateUserZodSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
@@ -12,14 +11,18 @@ const CreateUserZodSchema = z.object({
   email: z.string(),
   password: z.string(),
   role: z.string().optional(),
+  address: z.object({
+    city: z.string(),
+    street: z.string(),
+    zip: z.number(),
+  }),
 });
 
 userRoutes.post("/create", async (req: Request, res: Response) => {
-
   try {
-    const body = await CreateUserZodSchema.parseAsync(req.body)
+    const body = await CreateUserZodSchema.parseAsync(req.body);
 
-    console.log(body, "zod body");
+    // const body = req.body
 
     const user = await User.create(body);
 
@@ -36,14 +39,6 @@ userRoutes.post("/create", async (req: Request, res: Response) => {
       error,
     });
   }
-
-  const body = req.body;
-  const user = await User.create(body);
-  res.status(201).json({
-    success: true,
-    message: "User created successfully",
-    user,
-  });
 });
 
 userRoutes.get("/", async (req: Request, res: Response) => {

@@ -1,6 +1,12 @@
 import { model, Schema } from "mongoose";
-import { IUser } from "../interfaces/userInterface";
+import { IAddress, IUser } from "../interfaces/userInterface";
 import validator from "validator";
+
+const addressSchema = new Schema<IAddress>({
+  city: { type: String, required: true },
+  street: { type: String, required: true },
+  zip: { type: Number, required: true },
+}, { _id: false });
 
 const userSchema = new Schema<IUser>({
   firstName: {
@@ -19,7 +25,6 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true,
     lowercase: true,
-    unique: [true, "email must be unique"],
     // validate: {
     //   validator: function (value) {
     //     return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
@@ -27,6 +32,8 @@ const userSchema = new Schema<IUser>({
     //   message: "Invalid email format",
     // },
     validate: [validator.isEmail, "Validator email error"],
+    // unique: true,
+    unique: [true, "Email must be unique"],
   },
   password: { type: String, required: true },
   role: {
@@ -34,6 +41,9 @@ const userSchema = new Schema<IUser>({
     enum: { values: ["user", "admin"], message: "Role is not valid" },
     default: "user",
   },
+  address: { type: addressSchema },
+},{
+  timestamps: true
 });
 
 export const User = model("User", userSchema);
