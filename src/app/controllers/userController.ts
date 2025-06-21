@@ -42,10 +42,10 @@ userRoutes.post("/create", async (req: Request, res: Response) => {
 });
 
 userRoutes.get("/", async (req: Request, res: Response) => {
-  const users = await User.find();
+  const allUser = await User.find();
   res.status(200).json({
     success: true,
-    users,
+    allUser,
   });
 });
 
